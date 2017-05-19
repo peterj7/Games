@@ -39,3 +39,4 @@ while incorrect == True:
         break #correct answer
 
 print("The number you chose was "+str(guess)+". Thanks for playing "+name+"!")
+
