@@ -1,2 +1,2 @@
 # Games
-Small games using Python that can be played from the console
+Small games that can be played from the console (Python, JSL)
