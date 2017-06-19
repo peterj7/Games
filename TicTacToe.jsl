@@ -1,0 +1,187 @@
+setupMat = [1 2 3, 4 5 6, 7 8 9];
+setupWindow = New Window( "Game Setup",
+	<<Dialog( modal ),
+	Spacer Box( Size(100,15) ),
+	V List Box(
+		Lineup Box( NCol( 1 ), Spacing(70,0),
+			Text Box("Welcome to TicTacToe in JMP!", << Set Font Style("Bold"))
+		),
+		Lineup Box( NCol( 2 ), Spacing(10,10),
+			Text Box( "Enter player 1 name:" ),
+			uname1 = Text Edit Box( "" ,
+				<< Set Width( 140 ),
+				<< Justify Text( "center" )
+			),
+			Text Box( "Enter player 2 name:" ),
+			uname2 = Text Edit Box( "" , 
+				<< Set Width( 140 ),
+				<< Justify Text( "center" )
+			)
+		),
+		Lineup Box( NCol( 3 ), Spacing(10,0),
+			Text Box( "Player 1 piece:" ),
+			Button Box( "1" ,
+				userPiece1 = 1;
+				userPiece2 = 0;
+			),
+			Button Box( "0" ,
+				userPiece1 = 0;
+				userPiece2 = 1;
+			)
+		),
+		Spacer Box( Size( 25, 25) ),
+		Lineup Box( NCol( 1 ), Spacing(110,0),
+			Text Box( "Board Setup:" )
+		),
+		Lineup Box( NCol( 1 ), Spacing(70,0),
+			Border Box( Left( 15 ), Right( 15 ), Bottom( 15 ), Top( 15 ), Sides(1000),
+				<<Set Color("red"), << Set Background Color("white"), << Set Style ("DashDot"),
+				Lineup Box(NCol(5), Spacing(10,10),
+					Text Box(setupMat[1,1]),
+					Text Box(" | "),
+					Text Box(setupMat[1,2]),
+					Text Box(" | "),
+					Text Box(setupMat[1,3]),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box(setupMat[2,1]),
+					Text Box(" | "),
+					Text Box(setupMat[2,2]),
+					Text Box(" | "),
+					Text Box(setupMat[2,3]),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box(setupMat[3,1]),
+					Text Box(" | "),
+					Text Box(setupMat[3,2]),
+					Text Box(" | "),
+					Text Box(setupMat[3,3])
+				)
+			),
+		),
+		Spacer Box( Size( 25, 25) ),
+		H List Box(
+			Button Box( "OK",
+				username1 = uname1 << Get Text;
+				username2 = uname2 << Get Text;
+			),
+			Button Box( "Cancel" )
+		)
+	)
+);
+boardMat = [. . ., . . ., . . .];
+For(i = 1, i <= 9, i++,
+	gameWindow = New Window( "Tic Tac Toe",
+		<<Dialog( modal ),
+		V List Box(
+			Lineup Box( NCol( 1 ), Spacing(70,0),
+				Text Box(userName1||" vs. "||userName2, << Set Font Style("Bold"))
+			),
+			Spacer Box( Size( 25, 25) ),
+			Lineup Box( NCol( 2 ), Spacing(10,10),
+				Text Box( "Spot:" ),
+				uspot = Number Edit Box( "" , 
+					<< Set Width( 10 )
+				)
+			)
+		),
+		Lineup Box( NCol( 1 ), Spacing(80,0),
+			Text Box( "Game Board:" )
+		),
+		Lineup Box( NCol( 1 ), Spacing(40,0),
+			Border Box( Left( 15 ), Right( 15 ), Bottom( 15 ), Top( 15 ), Sides(1000),
+				<< Set Background Color("white"), << Set Style ("DashDot"),
+				Lineup Box(NCol(5), Spacing(10,10),
+					Text Box(boardMat[1,1]),
+					Text Box(" | "),
+					Text Box(boardMat[1,2]),
+					Text Box(" | "),
+					Text Box(boardMat[1,3]),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box(boardMat[2,1]),
+					Text Box(" | "),
+					Text Box(boardMat[2,2]),
+					Text Box(" | "),
+					Text Box(boardMat[2,3]),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box(boardMat[3,1]),
+					Text Box(" | "),
+					Text Box(boardMat[3,2]),
+					Text Box(" | "),
+					Text Box(boardMat[3,3])
+				)
+			),
+		),
+		Spacer Box( Size( 25, 25) ),
+		H List Box(
+			Button Box( "Continue",
+				userMove = uspot << get;
+				If(Modulo(i, 2) == 1,
+					boardMat[userMove] = userPiece1,
+					boardMat[userMove] = userPiece2
+				);
+				Current Window() << Close Window;
+			),
+			Button Box( "Cancel" , i = 10)
+		)
+	)
+);
+resultWindow = New Window( "Tic Tac Toe",
+	<<Dialog( modal ),
+	V List Box(
+		Lineup Box( NCol( 1 ), Spacing(70,0),
+			Text Box(userName1||" vs. "||userName2, << Set Font Style("Bold"))
+		),
+		Spacer Box( Size( 25, 25) ),
+		Lineup Box( NCol( 1 ), Spacing(80,0),
+			Text Box( "Game Board:" )
+		),
+		Lineup Box( NCol( 1 ), Spacing(40,0),
+			Border Box( Left( 15 ), Right( 15 ), Bottom( 15 ), Top( 15 ), Sides(1000),
+				<<Set Color("red"), << Set Background Color("white"), << Set Style ("DashDot"),
+				Lineup Box(NCol(5), Spacing(10,10),
+					Text Box(boardMat[1,1]),
+					Text Box(" | "),
+					Text Box(boardMat[1,2]),
+					Text Box(" | "),
+					Text Box(boardMat[1,3]),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box(boardMat[2,1]),
+					Text Box(" | "),
+					Text Box(boardMat[2,2]),
+					Text Box(" | "),
+					Text Box(boardMat[2,3]),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box( "__" ),
+					Text Box(boardMat[3,1]),
+					Text Box(" | "),
+					Text Box(boardMat[3,2]),
+					Text Box(" | "),
+					Text Box(boardMat[3,3])
+				)
+			),
+		),
+		Spacer Box( Size( 25, 25) )
+	)
+);
