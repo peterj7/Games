@@ -1,59 +1,69 @@
-setupMat = [1 2 3, 4 5 6, 7 8 9];
-boardMat = [. . ., . . ., . . .];
-setupBoardDisplay = Function({},Lineup Box(NCol(5), Spacing(10,10),
-					Text Box(setupMat[1,1]),
-					Text Box(" | "),
-					Text Box(setupMat[1,2]),
-					Text Box(" | "),
-					Text Box(setupMat[1,3]),
-					Text Box( "__" ),
-					Text Box( "__" ),
-					Text Box( "__" ),
-					Text Box( "__" ),
-					Text Box( "__" ),
-					Text Box(setupMat[2,1]),
-					Text Box(" | "),
-					Text Box(setupMat[2,2]),
-					Text Box(" | "),
-					Text Box(setupMat[2,3]),
-					Text Box( "__" ),
-					Text Box( "__" ),
-					Text Box( "__" ),
-					Text Box( "__" ),
-					Text Box( "__" ),
-					Text Box(setupMat[3,1]),
-					Text Box(" | "),
-					Text Box(setupMat[3,2]),
-					Text Box(" | "),
-					Text Box(setupMat[3,3])
-),0);
-boardDisplay = Function({},Lineup Box(NCol(5), Spacing(10,10),
-					Text Box(boardMat[1,1]),
-					Text Box(" | "),
-					Text Box(boardMat[1,2]),
-					Text Box(" | "),
-					Text Box(boardMat[1,3]),
-					Text Box( "__" ),
-					Text Box( "__" ),
-					Text Box( "__" ),
-					Text Box( "__" ),
-					Text Box( "__" ),
-					Text Box(boardMat[2,1]),
-					Text Box(" | "),
-					Text Box(boardMat[2,2]),
-					Text Box(" | "),
-					Text Box(boardMat[2,3]),
-					Text Box( "__" ),
-					Text Box( "__" ),
-					Text Box( "__" ),
-					Text Box( "__" ),
-					Text Box( "__" ),
-					Text Box(boardMat[3,1]),
-					Text Box(" | "),
-					Text Box(boardMat[3,2]),
-					Text Box(" | "),
-					Text Box(boardMat[3,3])
-),0);
+::i = 1;
+::xwins = 0;
+::owins = 0;
+::winner = -1;
+::pvp = 0;
+play = 1;
+boardVal = [-101 -102 -103, -104 -105 -106, -107 -108 -109];
+resetBoardMat = Function({}, boardVal = [-101 -102 -103, -104 -105 -106, -107 -108 -109], 0);
+xoButton = Function({x},
+	If(x == 1, "X",
+		x == 0, "O",
+		" "
+	),0
+);
+xoBox = Function({x},
+	(If(Modulo(::i, 2) == 1,
+		boardVal[x] = 1,
+		boardVal[x] = 0,
+	);
+	::i++;
+	Current Window() << Close Window
+	),0
+);
+findEmptySpot = Function({x, y, z},
+	If(boardVal[x] < 0,
+		(If((boardVal[y] + boardVal[z] != 1), (spotTaken = 0; xoBox(x); Break();), spotTaken = 1;)),
+		boardVal[y] < 0,
+		(If((boardVal[z] + boardVal[x] != 1), (spotTaken = 0; xoBox(y); Break();), spotTaken = 1;)),
+		boardVal[z] < 0,
+		(If((boardVal[x] + boardVal[y] != 1), (spotTaken = 0; xoBox(z); Break();), spotTaken = 1;))
+	)
+);
+spotTaken = 1;
+tttalg = Function({},
+	(spotTaken = 1;
+	For( k = 1, k <= 1, k++,
+		If((boardVal[1] + boardVal[2] + boardVal[3] > -110 & boardVal[1] + boardVal[2] + boardVal[3] < 0), (findEmptySpot(1, 2, 3)));
+		If((boardVal[4] + boardVal[5] + boardVal[6] > -110 & boardVal[4] + boardVal[5] + boardVal[6] < 0), (findEmptySpot(4, 5, 6)));
+		If((boardVal[7] + boardVal[8] + boardVal[9] > -110 & boardVal[7] + boardVal[8] + boardVal[9] < 0), (findEmptySpot(7, 8, 9)));
+		If((boardVal[1] + boardVal[4] + boardVal[7] > -110 & boardVal[1] + boardVal[4] + boardVal[7] < 0), (findEmptySpot(1, 4, 7)));
+		If((boardVal[2] + boardVal[5] + boardVal[8] > -110 & boardVal[2] + boardVal[5] + boardVal[8] < 0), (findEmptySpot(2, 5, 8)));
+		If((boardVal[3] + boardVal[6] + boardVal[9] > -110 & boardVal[3] + boardVal[6] + boardVal[9] < 0), (findEmptySpot(3, 6, 9)));
+		If((boardVal[1] + boardVal[5] + boardVal[9] > -110 & boardVal[1] + boardVal[5] + boardVal[9] < 0), (findEmptySpot(1, 5, 9)));
+		If((boardVal[3] + boardVal[5] + boardVal[7] > -110 & boardVal[3] + boardVal[5] + boardVal[7] < 0), (findEmptySpot(3, 5, 7)));
+	);
+	while(spotTaken == 1,
+		(rand = Random Integer(1, 9);
+			If(boardVal[rand] < 0, (xoBox(rand); spotTaken = 0));
+		)
+	);
+	),0
+);
+checkWin = Function({},
+	(winner = -1;
+	If(boardVal[1] == boardVal[2] == boardVal[3], (winner = boardVal[1]; j = 10),
+		boardVal[4] == boardVal[5] == boardVal[6], (winner = boardVal[4]; j = 10),
+		boardVal[7] == boardVal[8] == boardVal[9], (winner = boardVal[7]; j = 10),
+		boardVal[1] == boardVal[4] == boardVal[7], (winner = boardVal[1]; j = 10),
+		boardVal[2] == boardVal[5] == boardVal[8], (winner = boardVal[2]; j = 10),
+		boardVal[3] == boardVal[6] == boardVal[9], (winner = boardVal[3]; j = 10),
+		boardVal[1] == boardVal[5] == boardVal[9], (winner = boardVal[1]; j = 10),
+		boardVal[3] == boardVal[5] == boardVal[7], (winner = boardVal[3]; j = 10)
+	);
+	),0
+);
+
 setupWindow = New Window( "Game Setup",
 	<<Dialog( modal ),
 	Spacer Box( Size(100,15) ),
@@ -74,90 +84,242 @@ setupWindow = New Window( "Game Setup",
 			)
 		),
 		Lineup Box( NCol( 3 ), Spacing(10,0),
-			Text Box( "Player 1 piece:" ),
-			Button Box( "1" ,
-				userPiece1 = 1;
-				userPiece2 = 0;
+			Text Box( "Play against:" ),
+			Button Box( "Computer" ,
+				pvp = 0;
 			),
-			Button Box( "0" ,
-				userPiece1 = 0;
-				userPiece2 = 1;
+			Button Box( "Player" ,
+				pvp = 1;
 			)
-		),
-		Spacer Box( Size( 25, 25) ),
-		Lineup Box( NCol( 1 ), Spacing(110,0),
-			Text Box( "Board Setup:" )
-		),
-		Lineup Box( NCol( 1 ), Spacing(70,0),
-			Border Box( Left( 15 ), Right( 15 ), Bottom( 15 ), Top( 15 ), Sides(1000),
-				<<Set Color("red"), << Set Background Color("white"), << Set Style ("DashDot"),
-				setupBoardDisplay
-			),
 		),
 		Spacer Box( Size( 25, 25) ),
 		H List Box(
 			Button Box( "OK",
-				username1 = uname1 << Get Text;
-				username2 = uname2 << Get Text;
+				uname1 = uname1 << Get Text;
+				If(uname1 == "", username1 = "Tic", username1 = uname1);
+				uname2 = uname2 << Get Text;
+				If(uname2 == "", username2 = "Tac", username2 = uname2);
 			),
-			Button Box( "Cancel" )
+			Button Box( "Cancel", pvp = -1)
 		)
 	)
 );
-For(i = 1, i <= 9, i++,
-	gameWindow = New Window( "Tic Tac Toe",
-		<<Dialog( modal ),
-		V List Box(
-			Lineup Box( NCol( 1 ), Spacing(70,0),
-				Text Box(userName1||" vs. "||userName2, << Set Font Style("Bold"))
-			),
-			Spacer Box( Size( 25, 25) ),
-			Lineup Box( NCol( 2 ), Spacing(10,10),
-				Text Box( "Spot:" ),
-				uspot = Number Edit Box( "" , 
-					<< Set Width( 10 )
+
+If(pvp == 1,
+	While( play == 1,
+		For(j = 1, j <= 9, j++,
+			gameWindow = New Window( userName1||" vs. "||userName2,
+				<<Dialog( modal ),
+				Lineup Box( NCol( 1 ), Spacing(100,0),
+					Text Box("Tic Tac Toe", << Set Font Style("Bold")),
+					Text Box("X: "||Char(xwins)||"  ||  "||"O: "||Char(owins))
+				),
+				Lineup Box( NCol( 1 ), Spacing(100,0),
+					Text Box()
+				),
+				Spacer Box( Size( 25, 25) ),
+				Lineup Box( NCol( 1 ), Spacing(100,0),
+					Text Box( "Game Board:" )
+				),
+				Lineup Box( NCol( 1 ), Spacing(10,0),
+					Border Box( Left( 10 ), Right( 10 ), Bottom( 10 ), Top( 10 ), Sides(1000),
+						<<Set Color("red"), << Set Background Color("white"), << Set Style ("DashDot"),
+						Lineup Box(NCol(3), Spacing(10,10),
+							Button Box(xoButton(boardVal[1]), xoBox(1)),
+							Button Box(xoButton(boardVal[2]), xoBox(2)),
+							Button Box(xoButton(boardVal[3]), xoBox(3)),
+							Button Box(xoButton(boardVal[4]), xoBox(4)),
+							Button Box(xoButton(boardVal[5]), xoBox(5)),
+							Button Box(xoButton(boardVal[6]), xoBox(6)),
+							Button Box(xoButton(boardVal[7]), xoBox(7)),
+							Button Box(xoButton(boardVal[8]), xoBox(8)),
+							Button Box(xoButton(boardVal[9]), xoBox(9))
+						)
+					),
+				),
+				Spacer Box( Size( 25, 25) ),
+				H List Box(
+					Button Box( "Reset Score" ,
+						::xwins = 0;
+						::owins = 0;
+						j--;
+						Current Window() << Close Window;
+					),
+					Button Box( "Reset Board" ,
+						resetBoardMat;
+						::i = 1;
+						j = 0;
+						Current Window() << Close Window;
+					),
+					Button Box( "Cancel" ,
+						play = 0;
+						j = 10;
+						Current Window() << Close Window;
+					)
+				)
+			);
+			checkWin;
+		);
+		If(play == 1,
+			If(xoButton(winner) == "X", xwins++, xoButton(winner) == "O", owins++);
+			resultWindow = New Window( "Game",
+				<<Dialog( modal ),
+				Lineup Box( NCol( 1 ), Spacing(100,0),
+					Text Box("Tic Tac Toe", << Set Font Style("Bold")),
+					Text Box("X: "||Char(xwins)||"  ||  "||"O: "||Char(owins)),
+				),
+				Lineup Box( NCol( 1 ), Spacing(100,0),
+					If(winner == -1, Text Box("  Tie Game!"), Text Box("   "||xoButton(winner)||" Wins!"))
+				),
+				Spacer Box( Size( 25, 25) ),
+				Lineup Box( NCol( 1 ), Spacing(100,0),
+					Text Box( "Game Board:" )
+				),
+				Lineup Box( NCol( 1 ), Spacing(10,0),
+					Border Box( Left( 10 ), Right( 10 ), Bottom( 10 ), Top( 10 ), Sides(1000),
+						<<Set Color("red"), << Set Background Color("white"), << Set Style ("DashDot"),
+						Lineup Box(NCol(3), Spacing(10,10),
+							Button Box(xoButton(boardVal[1])),
+							Button Box(xoButton(boardVal[2])),
+							Button Box(xoButton(boardVal[3])),
+							Button Box(xoButton(boardVal[4])),
+							Button Box(xoButton(boardVal[5])),
+							Button Box(xoButton(boardVal[6])),
+							Button Box(xoButton(boardVal[7])),
+							Button Box(xoButton(boardVal[8])),
+							Button Box(xoButton(boardVal[9])),
+						)
+					)
+				),
+				Spacer Box( Size( 25, 25) ),
+				H List Box(
+					Button Box( "Reset Score & Board" ,
+						::xwins = 0;
+						::owins = 0;
+						resetBoardMat;
+						::i = 1;
+						Current Window() << Close Window;
+					),
+					Button Box( "Reset Board" ,
+						resetBoardMat;
+						::i = 1;
+						Current Window() << Close Window;
+					),
+					Button Box( "Cancel" ,
+						play = 0;
+						Current Window() << Close Window;
+					)
 				)
 			)
-		),
-		Lineup Box( NCol( 1 ), Spacing(80,0),
-			Text Box( "Game Board:" )
-		),
-		Lineup Box( NCol( 1 ), Spacing(40,0),
-			Border Box( Left( 15 ), Right( 15 ), Bottom( 15 ), Top( 15 ), Sides(1000),
-				<< Set Background Color("white"), << Set Style ("DashDot"),
-				boardDisplay
-			),
-		),
-		Spacer Box( Size( 25, 25) ),
-		H List Box(
-			Button Box( "Continue",
-				userMove = uspot << get;
-				If(Modulo(i, 2) == 1,
-					boardMat[userMove] = userPiece1,
-					boardMat[userMove] = userPiece2
-				);
-				Current Window() << Close Window;
-			),
-			Button Box( "Cancel" , i = 10)
-		)
-	)
-);
-resultWindow = New Window( "Tic Tac Toe",
-	<<Dialog( modal ),
-	V List Box(
-		Lineup Box( NCol( 1 ), Spacing(70,0),
-			Text Box(userName1||" vs. "||userName2, << Set Font Style("Bold"))
-		),
-		Spacer Box( Size( 25, 25) ),
-		Lineup Box( NCol( 1 ), Spacing(80,0),
-			Text Box( "Game Board:" )
-		),
-		Lineup Box( NCol( 1 ), Spacing(40,0),
-			Border Box( Left( 15 ), Right( 15 ), Bottom( 15 ), Top( 15 ), Sides(1000),
-				<<Set Color("red"), << Set Background Color("white"), << Set Style ("DashDot"),
-				boardDisplay
-			),
-		),
-		Spacer Box( Size( 25, 25) )
+		);
+	),
+	
+	pvp == 0,
+	While( play == 1,
+		For(j = 1, j <= 9, j++,
+			gameWindow = New Window( userName1||" vs. Computer",
+				<<Dialog( modal ),
+				Lineup Box( NCol( 1 ), Spacing(100,0),
+					Text Box("Tic Tac Toe", << Set Font Style("Bold")),
+					Text Box("X: "||Char(xwins)||"  ||  "||"O: "||Char(owins))
+				),
+				Lineup Box( NCol( 1 ), Spacing(100,0),
+					Text Box()
+				),
+				Spacer Box( Size( 25, 25) ),
+				Lineup Box( NCol( 1 ), Spacing(100,0),
+					Text Box( "Game Board:" )
+				),
+				Lineup Box( NCol( 1 ), Spacing(10,0),
+					Border Box( Left( 10 ), Right( 10 ), Bottom( 10 ), Top( 10 ), Sides(1000),
+						<<Set Color("red"), << Set Background Color("white"), << Set Style ("DashDot"),
+						Lineup Box(NCol(3), Spacing(10,10),
+							Button Box(xoButton(boardVal[1]), (xoBox(1); checkWin; If(j < 9, (j++; tttAlg)))),
+							Button Box(xoButton(boardVal[2]), (xoBox(2); checkWin; If(j < 9, (j++; tttAlg)))),
+							Button Box(xoButton(boardVal[3]), (xoBox(3); checkWin; If(j < 9, (j++; tttAlg)))),
+							Button Box(xoButton(boardVal[4]), (xoBox(4); checkWin; If(j < 9, (j++; tttAlg)))),
+							Button Box(xoButton(boardVal[5]), (xoBox(5); checkWin; If(j < 9, (j++; tttAlg)))),
+							Button Box(xoButton(boardVal[6]), (xoBox(6); checkWin; If(j < 9, (j++; tttAlg)))),
+							Button Box(xoButton(boardVal[7]), (xoBox(7); checkWin; If(j < 9, (j++; tttAlg)))),
+							Button Box(xoButton(boardVal[8]), (xoBox(8); checkWin; If(j < 9, (j++; tttAlg)))),
+							Button Box(xoButton(boardVal[9]), (xoBox(9); checkWin; If(j < 9, (j++; tttAlg))))
+						)
+					),
+				),
+				Spacer Box( Size( 25, 25) ),
+				H List Box(
+					Button Box( "Reset Score" ,
+						::xwins = 0;
+						::owins = 0;
+						j--;
+						Current Window() << Close Window;
+					),
+					Button Box( "Reset Board" ,
+						resetBoardMat;
+						::i = 1;
+						j = 0;
+						Current Window() << Close Window;
+					),
+					Button Box( "Cancel" ,
+						play = 0;
+						j = 10;
+						Current Window() << Close Window;
+					)
+				)
+			);
+			checkWin;
+		);
+		If(play == 1,
+			If(xoButton(winner) == "X", xwins++, xoButton(winner) == "O", owins++);
+			resultWindow = New Window( "Game",
+				<<Dialog( modal ),
+				Lineup Box( NCol( 1 ), Spacing(100,0),
+					Text Box("Tic Tac Toe", << Set Font Style("Bold")),
+					Text Box("X: "||Char(xwins)||"  ||  "||"O: "||Char(owins)),
+				),
+				Lineup Box( NCol( 1 ), Spacing(100,0),
+					If(winner == -1, Text Box("  Tie Game!"), Text Box("   "||xoButton(winner)||" Wins!"))
+				),
+				Spacer Box( Size( 25, 25) ),
+				Lineup Box( NCol( 1 ), Spacing(100,0),
+					Text Box( "Game Board:" )
+				),
+				Lineup Box( NCol( 1 ), Spacing(10,0),
+					Border Box( Left( 10 ), Right( 10 ), Bottom( 10 ), Top( 10 ), Sides(1000),
+						<<Set Color("red"), << Set Background Color("white"), << Set Style ("DashDot"),
+						Lineup Box(NCol(3), Spacing(10,10),
+							Button Box(xoButton(boardVal[1])),
+							Button Box(xoButton(boardVal[2])),
+							Button Box(xoButton(boardVal[3])),
+							Button Box(xoButton(boardVal[4])),
+							Button Box(xoButton(boardVal[5])),
+							Button Box(xoButton(boardVal[6])),
+							Button Box(xoButton(boardVal[7])),
+							Button Box(xoButton(boardVal[8])),
+							Button Box(xoButton(boardVal[9])),
+						)
+					)
+				),
+				Spacer Box( Size( 25, 25) ),
+				H List Box(
+					Button Box( "Reset Score & Board" ,
+						::xwins = 0;
+						::owins = 0;
+						resetBoardMat;
+						::i = 1;
+						Current Window() << Close Window;
+					),
+					Button Box( "Reset Board" ,
+						resetBoardMat;
+						::i = 1;
+						Current Window() << Close Window;
+					),
+					Button Box( "Cancel" ,
+						play = 0;
+						Current Window() << Close Window;
+					)
+				)
+			)
+		);
 	)
 );
